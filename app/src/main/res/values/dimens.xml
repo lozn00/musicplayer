@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="theme_margin_left_big">12dp</dimen>
+    <dimen name="dp_margin_media">10dp</dimen>
+    <dimen name="theme_margin_left">10dp</dimen>
+    <dimen name="theme_font_size_42px">14dp</dimen>
+    <dimen name="theme_font_size_big_title_size_46px">15.3dp</dimen>
+    <dimen name="dp_music_play_top_buttom">15dp</dimen>
+    <dimen name="default_font_size">14dp</dimen>
+    <dimen name="dialog_music_station_height">260dp</dimen>
+</resources>

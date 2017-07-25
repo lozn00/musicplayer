@@ -1,0 +1,30 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="dialog_bottom_show" parent="dialog_transparent">
+        <item name="android:windowIsFloating">false
+        </item><!-- 浮窗显示为妙 显示在activity智商 不过设不设置貌似没影响 会导致无法patch_parent-->
+        <item name="android:windowEnterAnimation">@anim/slide_out_to_top</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_to_bottom</item>
+
+    </style>
+
+    <style name="dialog_transparent">
+        <item name="android:windowFrame">@null</item><!--边框-->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">false</item><!--半透明-->
+        <item name="android:windowBackground">@android:color/transparent</item><!--这里可以设置透明背景-->
+        <item name="android:windowIsFloating">true
+        </item><!-- 浮窗显示为妙 显示在activity智商 不过设不设置貌似没影响 会导致无法patch_parent  false则包裹。-->
+        <item name="android:backgroundDimEnabled">true</item><!-- 模糊效果 不过设不设置貌似没影响 -->
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+</resources>

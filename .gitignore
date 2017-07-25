@@ -1,0 +1,17 @@
+build
+/.idea
+/app/*.iml
+/app/*.apk
+/mylibrary/*.iml
+/huluboshi_new.iml
+/live
+gradlew
+gradlew.bat
+/*.DS_Store
+*.iml
+/*.properties
+
+/build/*.iml
+*.bat
+/.gradle
+/gradle
