@@ -35,13 +35,10 @@ public class MusicListActivity extends AppCompatActivity {
         recyclerView = ((RecyclerView) findViewById(R.id.recyclerview));
         musicServiceHelper = MusicServiceHelper.getInstance(this, onMusicHelperBaceListener, this);
 
-        final ArrayList list = new ArrayList<>();
-        //http://api.buyao.tv/topic/201704/20170418173230.mp3"音乐地址
-        list.add(new NetMusicModel("test", "http://api.buyao.tv/topic/201704/20170418173230.mp3"));
-        list.add(new NetMusicModel("老男孩", "http://sc.111ttt.com/up/mp3/239897/A6DD6C3334D173D79F76592AC0B8D02D.mp3"));
-        list.add(new NetMusicModel("平凡之路", " http://sc1.111ttt.com/2014/1/09/24/2242313311.mp3"));
-        list.add(new NetMusicModel("说书人", " http://sc.111ttt.com/up/mp3/150826/94C648CCAABB88287EF299C45AC8A636.mp3"));
-        list.add(new NetMusicModel("雨花石", " http://sc.111ttt.com/up/mp3/312428/4CB74F7E4720D5C8FB3922591DAEC514.mp3"));
+        final ArrayList list = new ArrayList<>();//铃声地址各位自己弄吧。
+        list.add(new NetMusicModel("一生所爱", "http://web.kugou.com/?actWion=single&filename=%u9093%u7D2B%u68CB__-__%u9A7F%u52A8%u7684%u5FC3&hash=3b676fd9d340c0a7382f273caa64ed87&timelen=218000μblog=1&chl=kugou"));
+        list.add(new NetMusicModel("老男孩", " http://m2.music.126.net/T1NwCCn2vb-ZR6x6obojkQ==/6645448279772928.mp3"));
+
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext(), LinearLayoutManager.VERTICAL, false));
