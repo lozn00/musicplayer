@@ -1,7 +1,10 @@
 
  图片演示
 
-![演示图片地址](https://github.com/qssq/musicplayer/blob/master/Pictures/1.gif)
+![演示图片地址1](https://github.com/qssq/musicplayer/blob/master/Pictures/1.png)
+![演示图片地址2](https://github.com/qssq/musicplayer/blob/master/Pictures/2.png)
+![演示图片地址3](https://github.com/qssq/musicplayer/blob/master/Pictures/3.png)
+![演示图片地址4](https://github.com/qssq/musicplayer/blob/master/Pictures/4.png)
 
 ##### 使用方法
 
@@ -135,8 +138,7 @@ class MediaControlBinder extends Binder {
 ```
 
 
-demo封装了MusicServiceHelper代码 可以轻松在任意activity中 写入，
-采用工厂模式轻松切换任意录制格式 RecordFactory类提供了5种录音姿势封装的演示
+demo封装了MusicServiceHelper代码 可以轻松在任意activity中使用
 # MusicServiceHelper主要代码
 
 ```
