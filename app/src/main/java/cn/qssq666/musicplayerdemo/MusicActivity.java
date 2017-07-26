@@ -95,7 +95,8 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (mPopSeekBarTouching) {//额 我发现多余了有 一个fromUser
-                final long newposition = (mPlayActionCallBack.getTotalTime() * progress) / 1000;
+                long totalTime = mPlayActionCallBack.getTotalTime();
+                final long newposition = (totalTime * progress) / 1000;
 
                 mPlayActionCallBack.seekTo((int) newposition);
             }
@@ -414,6 +415,9 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
         @Override
         public void onSeekTo(long pos) {
+            if(pos>Integer.MAX_VALUE){
+
+            }
             Log.d(TAG, "onSeekTo：" + pos);
         }
 

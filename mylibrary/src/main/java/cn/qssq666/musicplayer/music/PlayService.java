@@ -16,8 +16,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.qssq666.musicplayer.BuildConfig;
-
 
 /**
  * http://mp.weixin.qq.com/s?__biz=MzA3NTYzODYzMg==&mid=2653577446&idx=2&sn=940cfe45f8da91277d1046d90368d440&scene=4#wechat_redirect
@@ -178,8 +176,6 @@ public class PlayService extends Service {
             setPlayState(PLAYSTATE.MPS_PAUSE);
         } else {//如果你手动暂停了 且已经 进入了临时模式 我不管， 如果你在播放 ，那么照样走上面的逻辑。只要你暂停了 ，我就会取消临时模式 这样就保证不会再别的app暂停的情况下又收到的开始的。然后本来暂停的音乐又开始播放了。
             if (enterTempPauseMode) {
-                if (BuildConfig.DEBUG) {
-                }
                 enterTempPauseMode = false;
             }
         }
@@ -479,11 +475,12 @@ public class PlayService extends Service {
 
         }
 
-        public boolean seekTo(int rate) {
+        public boolean seekTo(int seekto) {
             if (mediaIsVolid()) {
                 return false;
             }
-            mMediaPlayer.seekTo(rate);
+            Log.w(TAG, "seekTo:" + seekto);
+            mMediaPlayer.seekTo(seekto);
 
             return true;
         }
@@ -622,9 +619,7 @@ public class PlayService extends Service {
 
 
                 // 开始播放
-                if (BuildConfig.DEBUG) {
-                    Log.w(TAG, "播放URL:" + mUrl);
-                }
+//                    Log.w(TAG, "播放URL:" + mUrl);
                 if (mUrl == null) {
                     return;
                 }

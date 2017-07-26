@@ -27,6 +27,26 @@
         android:layout_height="wrap_content"
         android:text="扫描本地音乐添加到歌单" />
 
+
+    <EditText
+        android:id="@+id/ev_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="请输入标题"
+        android:text="测试歌曲插入 " />
+
+    <EditText
+        android:id="@+id/ev_url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="请输入本地地址/或网络地址" />
+
+    <Button
+        android:id="@+id/btn_add_music"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="插入歌曲" />
+
     <TextView
         android:id="@+id/btn_github"
         android:layout_width="wrap_content"

@@ -8,9 +8,11 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,12 +21,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.qssq666.musicplayer.music.MusicData;
+import cn.qssq666.musicplayerdemo.bean.NetMusicModel;
 import cn.qssq666.musicplayerdemo.bean.PhoneMedia;
 import cn.qssq666.musicplayerdemo.interfaces.INotify;
 import cn.qssq666.musicplayerdemo.msic.MusicServiceHelper;
 import cn.qssq666.musicplayerdemo.msic.QssqTask;
 import cn.qssq666.musicplayerdemo.utils.DialogUtils;
 import cn.qssq666.musicplayerdemo.utils.TestUtils;
+
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -33,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean mCancel;
     private final static String TAG = "MainActivity";
     private TextView tvGithub;
+    private EditText evTitle;
+    private EditText evUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +46,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         findViewById(R.id.btn_to_play_Page).setOnClickListener(this);
         findViewById(R.id.btn_scan_local_music).setOnClickListener(this);
+        evTitle = ((EditText) findViewById(R.id.ev_title));
+        evUrl = ((EditText) findViewById(R.id.ev_url));
+        findViewById(R.id.btn_add_music).setOnClickListener(this);
         tvGithub = (TextView) findViewById(R.id.btn_github);
         tvGithub.setOnClickListener(this);
         findViewById(R.id.btn_to_play_list).setOnClickListener(this);
@@ -104,8 +113,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             break;
             case R.id.btn_scan_local_music:
-
                 scanLocalMusic();
+                break;
+            case R.id.btn_add_music:
+                ArrayList list = null;
+                if (instance.getPlaybinder().getMusicList() == null) {
+                    list = new ArrayList();
+                    instance.getPlaybinder().setMusicList(list);
+                } else {
+                    list = (ArrayList) instance.getPlaybinder().getMusicList();
+                }
+                NetMusicModel model = new NetMusicModel();
+                model.setTitle(evTitle.getText().toString());
+                if (TextUtils.isEmpty(evUrl.getText().toString())) {
+                    Toast.makeText(this, "数据为空", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                model.setUrl(evUrl.getText().toString());
+                synchronized (list) {
+                    list.add(model);
+                }
+
                 break;
         }
     }
