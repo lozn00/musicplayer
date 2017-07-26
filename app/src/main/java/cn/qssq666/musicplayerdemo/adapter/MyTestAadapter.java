@@ -38,5 +38,5 @@ public class MyTestAadapter extends BaseRecyclervdapter<ShowModelI, TestViewHold
         this.currentPosition = currentPosition;
     }
 
-    private int currentPosition;
+    private int currentPosition=-1;
 }

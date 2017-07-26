@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -335,6 +336,19 @@ public class PlayService extends Service {
             return PlayService.this.getCurrentModel();
         }
 
+        /**
+         * 如果没有播放没有初始化 用来获取这个判断类型也是可以的
+         *
+         * @return
+         */
+        public MusicData getFirstModel() {
+            if (mMusicList != null && !mMusicList.isEmpty()) {
+
+                return mMusicList.get(0);
+            }
+
+            return null;
+        }
 
         public int getDuration() {
             if (mediaIsVolid()) {
@@ -616,7 +630,7 @@ public class PlayService extends Service {
                 }
 //                mMediaPlayer.release()
                 destoryMediaPlayer();
-                mMediaPlayer =onCreateMediaPlayer();
+                mMediaPlayer = onCreateMediaPlayer();
 //                mMediaPlayer = MediaPlayer.create() new MediaPlayer();
                 mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 mMediaPlayer.setOnCompletionListener(this);
@@ -647,7 +661,13 @@ public class PlayService extends Service {
         }
 
         protected void onSetDataResource() throws IOException {
-            mMediaPlayer.setDataSource(mUrl);
+            if (mUrl.startsWith("android.resource://")) {
+                mMediaPlayer.setDataSource(PlayService.this, Uri.parse(mUrl));
+
+            } else {
+                mMediaPlayer.setDataSource(mUrl);
+
+            }
         }
 
         /**
@@ -748,7 +768,7 @@ public class PlayService extends Service {
                 return true;
             }
             mErrorCount++;
-            Log.e(TAG, "onError播放出现错误,waht:" + what + ",extra:" + extra+","+wahtStr);
+            Log.e(TAG, "onError播放出现错误,waht:" + what + ",extra:" + extra + "," + wahtStr);
             setErrPlayState(wahtStr + " " + extraStr);
 
             return false;//看来问题解决了 onComplete

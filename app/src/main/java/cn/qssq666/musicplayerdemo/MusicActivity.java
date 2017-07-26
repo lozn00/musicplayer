@@ -202,7 +202,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                 }
                 //初始化对话框适配器
                 if (adapterDialog == null) {
-                    if (mPlaybinder.getCurrentModel() instanceof ShowModelI) {
+                    if (mPlaybinder.getFirstModel() instanceof ShowModelI) {
 
 
                         MusicDialogAdapter adapter = new MusicDialogAdapter();
@@ -210,7 +210,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                         adapterDialog = adapter;
                         adapterDialog.setData((List) mPlaybinder.getMusicList());
                     } else {
-                        Toast.makeText(this, "error type", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "error type 请务必实现ShowModelI", Toast.LENGTH_SHORT).show();
                         return;
                     }
                 }
@@ -363,7 +363,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 //            mIvPlayPause.stopAnim();
             setIsPause();
             Log.e(TAG, "播放错误" + str);
-            Toast.makeText(MusicActivity.this, "播放错误" + str, Toast.LENGTH_SHORT).show();
+            AppContext.showToast( "播放错误" + str);
 //            onLoadFail("播放失败");
           /*  if (mPlaybinder.isCurrentControlList(adapter.getData())) {
                 adapter.setPlayposition(-1);

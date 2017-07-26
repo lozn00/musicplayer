@@ -4,12 +4,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Toast;
 
+import java.util.List;
+
+import cn.qssq666.musicplayer.music.MusicData;
+import cn.qssq666.musicplayerdemo.msic.MusicServiceHelper;
 import cn.qssq666.musicplayerdemo.utils.AutoUtils;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Intent musicService;
+    private MusicServiceHelper instance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +24,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.btn_to_play_Page).setOnClickListener(this);
         findViewById(R.id.btn_to_play_list).setOnClickListener(this);
         musicService = AutoUtils.getMusicService(this);
+        instance = MusicServiceHelper.getInstance(this, new MusicServiceHelper.OnMusicHelperBaceListener() {
+            @Override
+            public void onPause(MusicData data) {
+
+            }
+
+            @Override
+            public void onPlayErr(String str, MusicData data) {
+
+            }
+
+            @Override
+            public void onPlay(MusicData data) {
+
+            }
+
+            @Override
+            public void onBindService() {
+
+            }
+        });
         this.startService(musicService);
     }
 
@@ -25,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_to_play_list: {
+
+
                 Intent intent = new Intent(this, MusicListActivity.class);
                 startActivity(intent);
             }
@@ -32,6 +61,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btn_to_play_Page:
 
             {
+                if (instance.getPlaybinder() != null) {
+                    List<? extends MusicData> musicList = instance.getPlaybinder().getMusicList();
+                    if (musicList == null || musicList.isEmpty()) {
+                        List defaultMusic = AppContext.getDefaultMusic();
+                        instance.setMusicList(defaultMusic);
+                        Toast.makeText(this, "第一次创建默认歌单,请点击右边菜单选择默认歌单进行播放", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
                 Intent intent = new Intent(this, MusicActivity.class);
                 startActivity(intent);
             }
@@ -43,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        instance.destory();
         this.stopService(musicService);
     }
 }

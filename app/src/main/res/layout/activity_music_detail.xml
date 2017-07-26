@@ -18,7 +18,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/white"
+        android:background="#dddddd"
         android:clipToPadding="true"
         android:fitsSystemWindows="true"
         android:orientation="vertical">
@@ -60,112 +60,123 @@
 
         </FrameLayout>
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:layout_marginTop="20dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingLeft="@dimen/theme_margin_left"
-            android:paddingRight="@dimen/theme_margin_left">
 
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/time_current"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:paddingLeft="4dp"
-                android:paddingRight="2dp"
-                android:text="00:00"
-                android:textColor="@color/colorThemeBlack"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <SeekBar
-                android:id="@+id/mediacontroller_progress"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:gravity="center_horizontal|center_vertical"
-                android:progress="30"
-                android:secondaryProgress="40" />
-
-            <TextView
-                android:id="@+id/totaltime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:paddingLeft="2dip"
-                android:paddingRight="4dip"
-                android:text=" 00:00"
-                android:textColor="@color/colorThemeBlack"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-        <android.support.percent.PercentFrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp">
-
-
-            <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                app:layout_widthPercent="50%">
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/theme_margin_left"
+                android:paddingRight="@dimen/theme_margin_left">
 
-                <ImageView
-                    android:id="@+id/ic_pre"
+
+                <TextView
+                    android:id="@+id/time_current"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/pageplaying_btn_radio_previous" />
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="2dp"
+                    android:text="00:00"
+                    android:textColor="@color/colorThemeBlack"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
-                <ImageView
-                    android:id="@+id/pause"
-                    android:layout_width="wrap_content"
+                <SeekBar
+                    android:id="@+id/mediacontroller_progress"
+                    android:layout_width="0dip"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/dp_margin_media"
-                    android:layout_marginRight="@dimen/dp_margin_media"
+                    android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:contentDescription="播放"
-                    android:src="@drawable/pageplaying_btn_radio_playing"
-                    android:transitionName="transitionPlay" />
+                    android:gravity="center_horizontal|center_vertical"
+                    android:progress="0"
+                    android:secondaryProgress="0" />
 
-                <ImageView
-                    android:id="@+id/ic_next"
+                <TextView
+                    android:id="@+id/totaltime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/pageplaying_btn_radio_next"
-                    android:transitionName="transitionNext" />
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="2dip"
+                    android:paddingRight="4dip"
+                    android:text=" 00:00"
+                    android:textColor="@color/colorThemeBlack"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/iv_music_list"
-                android:layout_width="wrap_content"
+            <android.support.percent.PercentFrameLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right|center_vertical"
-                android:layout_weight="1"
-                android:padding="@dimen/theme_margin_left_big"
-                android:src="@drawable/pageplaying_btn_radio_list" />
+                android:layout_marginBottom="20dp">
 
-            <ImageView
-                android:id="@+id/iv_switch_mode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:padding="@dimen/theme_margin_left_big"
-                android:src="@drawable/pageplaying_btn_radio_loop" />
-        </android.support.percent.PercentFrameLayout>
+
+                <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    app:layout_widthPercent="50%">
+
+                    <ImageView
+                        android:id="@+id/ic_pre"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:src="@drawable/pageplaying_btn_radio_previous" />
+
+                    <ImageView
+                        android:id="@+id/pause"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dp_margin_media"
+                        android:layout_marginRight="@dimen/dp_margin_media"
+                        android:layout_weight="1"
+                        android:contentDescription="播放"
+                        android:src="@drawable/pageplaying_btn_radio_playing"
+                        android:transitionName="transitionPlay" />
+
+                    <ImageView
+                        android:id="@+id/ic_next"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/pageplaying_btn_radio_next"
+                        android:transitionName="transitionNext" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/iv_music_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center_vertical"
+                    android:layout_weight="1"
+                    android:padding="@dimen/theme_margin_left_big"
+                    android:src="@drawable/pageplaying_btn_radio_list"
+                    android:tint="@color/colorBlack"
+                    android:tintMode="multiply" />
+
+                <ImageView
+                    android:id="@+id/iv_switch_mode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:padding="@dimen/theme_margin_left_big"
+                    android:src="@drawable/pageplaying_btn_radio_loop"
+                    android:tint="@color/colorBlack"
+                    android:tintMode="multiply" />
+            </android.support.percent.PercentFrameLayout>
+        </LinearLayout>
 
     </LinearLayout>
 </layout>
