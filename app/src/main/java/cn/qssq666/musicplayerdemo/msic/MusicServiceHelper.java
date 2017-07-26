@@ -14,7 +14,7 @@ import cn.qssq666.musicplayer.music.IMediaControlCallBack;
 import cn.qssq666.musicplayer.music.MusicData;
 import cn.qssq666.musicplayer.music.PlayService;
 import cn.qssq666.musicplayerdemo.interfaces.ShowModelI;
-import cn.qssq666.musicplayerdemo.utils.AutoUtils;
+import cn.qssq666.musicplayerdemo.utils.TestUtils;
 
 /**
  * Created by 情随事迁(qssq666@foxmail.com) on 2017/2/15.
@@ -72,7 +72,7 @@ public class MusicServiceHelper {
         this.onMusicHelperBaceListener = onMusicHelperBaceListener;
         name = musicStationName;
         this.context = context;
-        context.bindService(AutoUtils.getMusicService(context), mPlayconn, Service.BIND_AUTO_CREATE);
+        context.bindService(TestUtils.getMusicService(context), mPlayconn, Service.BIND_AUTO_CREATE);
 
 
     }

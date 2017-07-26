@@ -7,7 +7,7 @@
 
 gradle
 ```
- compile 'cn.qssq666:musicplayer:0.1'//回调duration由秒改成毫秒
+ compile 'cn.qssq666:musicplayer:0.1'
 
 
 ```
@@ -71,7 +71,13 @@ class MediaControlBinder extends Binder {
 
         public MusicData getCurrentModel() {
         }
-
+ /**
+         * 如果没有播放没有初始化 用来获取这个判断类型也是可以的
+         *
+         * @return
+         */
+        public MusicData getFirstModel() {
+        }
 
         public int getDuration() {
         }
@@ -129,9 +135,9 @@ class MediaControlBinder extends Binder {
 ```
 
 
-demo中MusicServiceHelper代码
+demo封装了MusicServiceHelper代码 可以轻松在任意activity中 写入，
 采用工厂模式轻松切换任意录制格式 RecordFactory类提供了5种录音姿势封装的演示
-
+# MusicServiceHelper主要代码
 
 ```
 
@@ -157,7 +163,64 @@ demo中MusicServiceHelper代码
         }
     }
 
+
+  private ServiceConnection mPlayconn = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            if (service instanceof PlayService.MediaControlBinder) {
+                mPlaybinder = ((PlayService.MediaControlBinder) service);
+                mPlaybinder.addMediaInfoCallBack(mMediaControlCallBack);
+                if (onMusicHelperBaceListener != null) {
+                    onMusicHelperBaceListener.onBindService();
+                }
+            }
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
      
      
 ```
+MusicServiceHelper是对绑定服务和添加监听的封装，各位不懂服务的绑定用法完全可以看MusicServiceHelper怎么写的哈,或者直接拿来用简单的需求，MainActivity中只需要判断是否有歌单则我通常就直接用这个帮助类了
+完全没必要写麻烦的添加监听方法了.
 
+# MusicServiceHelper 在activity或者fragment里面的用法
+
+
+```
+//onCreate中
+  instance = MusicServiceHelper.getInstance(this, new MusicServiceHelper.OnMusicHelperBaceListener() {
+            @Override
+            public void onPause(MusicData data) {
+
+            }
+
+            @Override
+            public void onPlayErr(String str, MusicData data) {
+
+            }
+
+            @Override
+            public void onPlay(MusicData data) {
+
+            }
+
+            @Override
+            public void onBindService() {
+
+            }
+        });
+ //onDestory中
+        instance.destory();
+
+
+```
+
+
+#　其他吐槽
+demo已实现了离线缓存功能,轻松为服务器减压!

@@ -10,7 +10,7 @@ import java.util.List;
 
 import cn.qssq666.musicplayer.music.MusicData;
 import cn.qssq666.musicplayerdemo.msic.MusicServiceHelper;
-import cn.qssq666.musicplayerdemo.utils.AutoUtils;
+import cn.qssq666.musicplayerdemo.utils.TestUtils;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         findViewById(R.id.btn_to_play_Page).setOnClickListener(this);
         findViewById(R.id.btn_to_play_list).setOnClickListener(this);
-        musicService = AutoUtils.getMusicService(this);
+        musicService = TestUtils.getMusicService(this);
         instance = MusicServiceHelper.getInstance(this, new MusicServiceHelper.OnMusicHelperBaceListener() {
             @Override
             public void onPause(MusicData data) {

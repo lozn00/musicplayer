@@ -19,6 +19,8 @@
         </activity>
         <activity android:name=".MusicActivity" />
         <activity android:name=".MusicListActivity" />
+
+        <service android:name=".msic.CachePlayService" />
     </application>
 
 </manifest>

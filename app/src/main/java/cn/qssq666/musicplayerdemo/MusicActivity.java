@@ -28,7 +28,7 @@ import cn.qssq666.musicplayerdemo.interfaces.OnItemClickListener;
 import cn.qssq666.musicplayerdemo.interfaces.ShowModelI;
 import cn.qssq666.musicplayerdemo.msic.MediaController;
 import cn.qssq666.musicplayerdemo.msic.PlayActionCallBack;
-import cn.qssq666.musicplayerdemo.utils.AutoUtils;
+import cn.qssq666.musicplayerdemo.utils.TestUtils;
 
 
 /**
@@ -52,7 +52,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         mBind = DataBindingUtil.setContentView(this, R.layout.activity_music_detail);
 
-        musicService = AutoUtils.getMusicService(this);
+        musicService = TestUtils.getMusicService(this);
         MusicActivity.this.bindService(musicService, mPlayconn, Service.BIND_AUTO_CREATE);
 
         mBind.ivSwitchMode.setOnClickListener(this);
