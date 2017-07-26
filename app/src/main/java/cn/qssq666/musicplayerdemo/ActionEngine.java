@@ -2,7 +2,10 @@ package cn.qssq666.musicplayerdemo;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.Gravity;
@@ -12,6 +15,8 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+
+import java.io.File;
 
 import cn.qssq666.musicplayerdemo.adapter.BaseRecyclervdapter;
 import cn.qssq666.musicplayerdemo.databinding.DialogMusicListBinding;
@@ -50,4 +55,34 @@ class ActionEngine {
 
 
     }
+
+    public static Intent getShareFileIntent(File file) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+        intent.setType("application/vnd.android.package-archive");
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        return intent;
+    }
+
+    public static void toWebView(Context context, String url) {
+
+        Intent intent = new Intent();
+        intent.setAction("android.intent.action.VIEW");
+        Uri content_url = Uri.parse(url);
+        intent.setData(content_url);
+        context.startActivity(intent);
+    }
+
+    public static void shareSend(Context context, String content) {
+        Intent intent = new Intent();
+        intent.setAction("android.intent.action.SEND");
+        intent.addCategory("android.intent.category.DEFAULT");
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, content);
+        context.startActivity(intent);
+    }
+
+
 }

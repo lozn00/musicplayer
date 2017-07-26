@@ -41,8 +41,8 @@ public class AppContext extends Application {
         defaultMusic.add(new NetMusicModel("游戏声音", "http://imgcache.gtimg.cn/club/moblie/special_sound/88-11_v_3.mp3"));
         defaultMusic.add(new NetMusicModel("德玛西亚", "http://imgcache.gtimg.cn/club/moblie/special_sound/x59_v_7.mp3"));
         defaultMusic.add(new NetMusicModel("俺老孙来也", "http://imgcache.gtimg.cn/club/moblie/special_sound/x57_v_7.mp3"));
-        defaultMusic.add(new NetMusicModel("德玛西亚资源文件", "android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.raw.x57_v_7));
-        defaultMusic.add(new NetMusicModel("俺老孙来也资源文件", "android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.raw.x59_v_7));
+        defaultMusic.add(new NetMusicModel("俺老孙来资源文件", "android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.raw.x57_v_7));
+        defaultMusic.add(new NetMusicModel("德玛西亚也资源文件", "android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.raw.x59_v_7));
 
     }
 

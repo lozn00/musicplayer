@@ -31,8 +31,6 @@ public class MusicListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_list);
         recyclerView = ((RecyclerView) findViewById(R.id.recyclerview));
-        musicServiceHelper = MusicServiceHelper.getInstance(this, onMusicHelperBaceListener, this);
-
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext(), LinearLayoutManager.VERTICAL, false));
@@ -54,6 +52,7 @@ public class MusicListActivity extends AppCompatActivity {
 
             }
         });
+        musicServiceHelper = MusicServiceHelper.getInstance(this, onMusicHelperBaceListener, this);
 
 //        musicStation.createPlayStationAndSHow();
 
@@ -89,7 +88,11 @@ public class MusicListActivity extends AppCompatActivity {
 
         @Override
         public void onBindService() {
+            if (musicServiceHelper.getPlaybinder() != null && musicServiceHelper.getPlaybinder().isPlaying()) {
 
+                adapter.setCurrentPosition(musicServiceHelper.getPlaybinder().getPlayListPosition());
+                adapter.notifyDataSetChanged();
+            }
         }
     };
 

@@ -12,9 +12,11 @@ import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.List;
 
 import cn.qssq666.musicplayer.music.IMediaControlCallBack;
@@ -22,9 +24,11 @@ import cn.qssq666.musicplayer.music.MusicData;
 import cn.qssq666.musicplayer.music.PlayService;
 import cn.qssq666.musicplayerdemo.adapter.MusicDialogAdapter;
 import cn.qssq666.musicplayerdemo.bean.LocalMusicModel;
+import cn.qssq666.musicplayerdemo.bean.PhoneMedia;
 import cn.qssq666.musicplayerdemo.databinding.ActivityMusicDetailBinding;
 import cn.qssq666.musicplayerdemo.databinding.DialogMusicListBinding;
 import cn.qssq666.musicplayerdemo.interfaces.OnItemClickListener;
+import cn.qssq666.musicplayerdemo.interfaces.OnItemLongClickListener;
 import cn.qssq666.musicplayerdemo.interfaces.ShowModelI;
 import cn.qssq666.musicplayerdemo.msic.MediaController;
 import cn.qssq666.musicplayerdemo.msic.PlayActionCallBack;
@@ -231,6 +235,21 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                                                          }
 
                     );
+                    adapterDialog.setOnItemLongClickListener(new OnItemLongClickListener() {
+                        @Override
+                        public boolean onItemLongClick(ViewGroup parent, View view, int position) {
+                            ShowModelI showModelI = adapterDialog.getData().get(position);
+                            if(showModelI instanceof PhoneMedia){
+                                File file = new File(((PhoneMedia) showModelI).getPath());
+                                if (!file.exists()) {
+                                    return false;
+                                }
+                                MusicActivity.this.startActivity(ActionEngine.getShareFileIntent(file));
+                                return true;
+                            }
+                            return false;
+                        }
+                    });
                 }
 
                 dialogMenuPair.second.show();

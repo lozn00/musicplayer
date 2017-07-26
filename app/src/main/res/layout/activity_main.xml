@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:padding="10dp"
     tools:context="cn.qssq666.musicplayerdemo.MainActivity">
 
 
@@ -12,7 +13,7 @@
         android:id="@+id/btn_to_play_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="打开播放列表" />
+        android:text="打开播放列表并设置默认歌单" />
 
     <Button
         android:id="@+id/btn_to_play_Page"
@@ -20,5 +21,16 @@
         android:layout_height="wrap_content"
         android:text="打开播放器控制台" />
 
+    <Button
+        android:id="@+id/btn_scan_local_music"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="扫描本地音乐添加到歌单" />
 
+    <TextView
+        android:id="@+id/btn_github"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="https://github.com/qssq/musicplayer"
+        android:textIsSelectable="true" />
 </LinearLayout>

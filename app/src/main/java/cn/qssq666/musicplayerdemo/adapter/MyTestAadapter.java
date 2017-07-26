@@ -29,7 +29,7 @@ public class MyTestAadapter extends BaseRecyclervdapter<ShowModelI, TestViewHold
     public void onBindViewHolder(TestViewHolder holder, final int position) {
         holder.textView.setText("" + getData().get(position).getMusicTitle());
 
-        holder.iv.setVisibility(currentPosition == position ? View.VISIBLE : View.GONE);
+        holder.iv.setVisibility(currentPosition == position ? View.VISIBLE : View.INVISIBLE);
 
 
     }
