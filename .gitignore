@@ -1,4 +1,4 @@
-build
+/build
 /.idea
 /app/*.iml
 /app/*.apk
@@ -14,3 +14,4 @@ gradlew.bat
 *.bat
 /.gradle
 /gradle
+
