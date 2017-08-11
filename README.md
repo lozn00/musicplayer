@@ -5,6 +5,18 @@
 ![演示图片地址2](https://github.com/qssq/musicplayer/blob/master/Pictures/2.png)
 ![演示图片地址3](https://github.com/qssq/musicplayer/blob/master/Pictures/3.png)
 ![演示图片地址4](https://github.com/qssq/musicplayer/blob/master/Pictures/4.png)
+##### 模块功能介绍
+
+
+模块无任何ui代码，只是一个播放器后台框架而已，是一个基于 service binder 作为控制台 +观察者模式提供回调的的音乐播放器
+
+
+demo项目则演示了多个列表 多个界面的控制播放暂停 能力 ui列表展示的能力，
+另外为了方便使用提供了一个工具类 帮助快速的绑定和接触binder绑定
+
+#### 是否可靠
+我的公司项目app正常使用中,复杂程度和类似正常的音乐app,目前功能比百度音乐人还复杂,多了各种语音 视频 动态 列表，各种fragment 嵌套多个，多个fragment中的列表播放控制和解绑。点击这边的fragment又要控制另外的 fragment列表的状态变成暂停，
+所以说，这app绝对不是因为demo而出现，而是先有项目后有demo
 
 ##### 使用方法
 
@@ -26,8 +38,7 @@ maven
 </dependency>
 ```
 
-
-视频地址
+##### 视频地址
 
 http://v.youku.com/v_show/id_XMjkyMTQ2MDAwOA==.html?spm=a2h3j.8428770.3416059.1
 
@@ -229,5 +240,7 @@ MusicServiceHelper是对绑定服务和添加监听的封装，各位不懂服�
 ```
 
 
+
 #　其他吐槽
-demo已实现了离线缓存功能,轻松为服务器减压!
+
+demo已实现了离线缓存功能,轻松为服务器减压! 推荐做烧钱的大流量公司这么干，可以大大节省成本.
