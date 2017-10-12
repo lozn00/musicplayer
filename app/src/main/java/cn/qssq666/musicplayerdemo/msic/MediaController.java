@@ -13,6 +13,7 @@ public class MediaController {
      * @param position
      * @return
      */
+
     public static String generateTime(long position) {
         if (position <= 0) {
             return "00:00";

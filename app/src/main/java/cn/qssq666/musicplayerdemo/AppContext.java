@@ -71,6 +71,7 @@ public class AppContext extends Application {
 //        return new HttpProxyCacheServer(getInstance());
     }
 
+
     public static AppContext getInstance() {
         return application_instance;
     }

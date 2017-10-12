@@ -27,6 +27,16 @@ public class PlayService extends Service {
     PLAYMODE mPlayMode = PLAYMODE.LIST_LOOP;
     PLAYSTATE mPlayState = PLAYSTATE.MPS_NOFILE;
 
+    public PlayService.MediaControlBinder getMediaControlBinder() {
+        return mediaControlBinder;
+    }
+
+    public void setMediaControlBinder(MediaControlBinder mediaControlBinder) {
+        this.mediaControlBinder = mediaControlBinder;
+    }
+
+    private PlayService.MediaControlBinder mediaControlBinder;
+
     public MediaPlayer getMediaPlayer() {
         return mMediaPlayer;
     }
@@ -232,6 +242,27 @@ public class PlayService extends Service {
 
     //    新增随机播放、单曲循环、顺序播放、播放时间进度条、定时关闭、下载、评论
     public class MediaControlBinder extends Binder {
+
+
+        /**
+         * @param playSpeed
+         * @return
+         * @throws IllegalStateException 不支持的时候会 抛出!
+         */
+        public boolean setPlaySpeed(float playSpeed) throws IllegalStateException {
+            return PlayService.this.setPlaySpeed(playSpeed);
+        }
+
+        public float getPlaySpeed() {
+//            float speed = getMediaPlayer().getPlaybackParams().getSpeed();
+            return PlayService.this.getPlaySpeed();
+        }
+
+
+        public MediaPlayer getMediaPlayer() {
+            return mMediaPlayer;
+        }
+
         public boolean addMediaInfoCallBack(IMediaControlCallBack mediaInfoCallBack) {
             return mMediaInfoPublicher.addMediaInfoCallBack(mediaInfoCallBack);
 
@@ -346,9 +377,15 @@ public class PlayService extends Service {
             return null;
         }
 
+        /**
+         * the duration in milliseconds, if no duration is available
+         * (for example, if streaming live content), -1 is returned.
+         *
+         * @return
+         */
         public int getDuration() {
             if (mediaIsVolid()) {
-                return 0;
+                return -1;
             }
             return mMediaPlayer.getDuration();
         }
@@ -563,7 +600,9 @@ public class PlayService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return new MediaControlBinder();
+        mediaControlBinder = new MediaControlBinder();
+        Log.w(TAG, "onBind" + mediaControlBinder);
+        return mediaControlBinder;
     }
 
     private Handler mProgressHandler = new Handler();
@@ -771,8 +810,19 @@ public class PlayService extends Service {
 
         @Override
         public void onPrepared(MediaPlayer mp) {
+            if (mPlaySpeed != 1.0f) {
+                try {
+                    setPlaySpeed(mPlaySpeed);
+
+                } catch (IllegalStateException e) {
+                    Log.d(TAG, "onPrepared-not set playSpeed");
+
+                }
+            }
             Log.d(TAG, "onPrepared");
             clearProgressListener();
+
+
             mErrorCount = 0;//清空原来的错误
             mMediaInfoPublicher.publishProgressChangeEvent(0);
             mMediaPlayer.start();
@@ -824,7 +874,62 @@ public class PlayService extends Service {
      * @param isPersonOpera
      * @return
      */
-    private boolean doNextLogic(boolean isPersonOpera) {
+
+
+    protected boolean doNextLogic(boolean isPersonOpera) {
+        if (mMusicList.isEmpty()) {
+            mMediaInfoPublicher.publishTipMsg("列表为空");
+            return false;
+        }
+        if (isPersonOpera == false && mPlayMode == PLAYMODE.SIMPLE_LOOP) {
+            Log.d(TAG, "自动操作的单曲循环模式 无需继续");
+            return false;
+        }
+
+        int playPosition = -1;
+        if (mPlayMode == PLAYMODE.LIST_LOOP || mPlayMode == PLAYMODE.SIMPLE_LOOP) {
+            playPosition = 1 + mPlayPosition;
+            if (playPosition >= mMusicList.size()) {//如果不成立也自动加1了 假如只有一首也没事
+                playPosition = 0;
+            }
+        } else if (mPlayMode == PLAYMODE.RANDOM_PLAY) {
+            playPosition = getRandomPosition();
+            playMedia(getMusicUrlByPosition(mPlayPosition));
+        } else if (mPlayMode == PLAYMODE.LIST_PLAY) {
+            playPosition = mPlayPosition + 1;
+            if (playPosition >= mMusicList.size()) {
+                setErrPlayState("没有下一首了！");
+            } else {
+            }
+        } else {
+            playPosition = -2;
+            mMediaInfoPublicher.publishTipMsg("当前模式不支持切换下一首哦!");
+        }
+
+
+        if (playPosition >= 0) {
+
+            if (onPlayNextMusicModel(getCurrentModel(playPosition), playPosition)) {
+
+                mPlayPosition = playPosition;//还是要付费!
+
+            } else {
+                return true;
+            }
+//            onPlayNextMusicModel(getMusicUrlByPosition(mPlayPosition));
+
+        }
+
+        return false;
+
+
+
+
+
+
+
+
+      /*
         if (mMusicList.isEmpty()) {
             mMediaInfoPublicher.publishTipMsg("列表为空");
             return false;
@@ -853,7 +958,49 @@ public class PlayService extends Service {
         } else {
             mMediaInfoPublicher.publishTipMsg("当前模式不支持切换下一首哦!");
         }
+        return false;*/
+
+    }
+
+
+    private float mPlaySpeed = 1.0f;
+
+    /**
+     * @param playSpeed
+     * @return
+     * @throws IllegalStateException 不支持的时候会 抛出!
+     */
+    public boolean setPlaySpeed(float playSpeed) throws IllegalStateException {
+        this.mPlaySpeed = playSpeed;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+
+
+            if (getMediaPlayer() == null) {
+                return false;
+            }
+            getMediaPlayer().setPlaybackParams(getMediaPlayer().getPlaybackParams().setSpeed(playSpeed));
+            this.mPlaySpeed = playSpeed;
+            return true;
+
+
+        } else {
+            Log.e(TAG, "you are phone not support set play speed");
+
+        }
+
         return false;
+    }
+
+    public float getPlaySpeed() {
+//            float speed = getMediaPlayer().getPlaybackParams().getSpeed();
+        return mPlaySpeed;
+    }
+
+
+    protected boolean onPlayNextMusicModel(MusicData musicUrlByPosition, int playPosition) {
+//        onPlayNextMusicModel(getMusicUrlByPosition(mPlayPosition));
+        playMedia(musicUrlByPosition.getPlayUrl());
+        return true;
     }
 
     /*   @Subscribe(threadMode = ThreadMode.MAIN)
@@ -881,4 +1028,5 @@ public class PlayService extends Service {
         abandonAudioFocus();
 //        this.unregisterReceiver(mLockScreenReceiver);
     }
+
 }
