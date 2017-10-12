@@ -22,7 +22,7 @@ demo项目则演示了多个列表 多个界面的控制播放暂停 能力 ui�
 
 gradle
 ```
- compile 'cn.qssq666:musicplayer:0.1'
+ compile 'cn.qssq666:musicplayer:0.2'
 
 
 ```

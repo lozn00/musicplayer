@@ -37,9 +37,9 @@ publish {
     userOrg = 'luozheng'//bintray网的用户id  04 Not Found [message:Subject 'qssq' was not found]
     groupId = 'cn.qssq666'//自己定义一个唯一的java的包名
     artifactId = 'musicplayer'//在bintray上的package名字
-    publishVersion = '0.1'//版本号
+    publishVersion = '0.2'//版本号
     desc = 'qssq666.cn'//描述，不重要
-    website = 'https://github.com/qssq666/musicplayer'
+    website = 'https://github.com/qssq/musicplayer'
     licences = ['Apache-2.0']//协议
 
 }
