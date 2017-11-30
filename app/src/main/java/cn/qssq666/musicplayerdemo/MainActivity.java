@@ -26,6 +26,7 @@ import cn.qssq666.musicplayerdemo.bean.PhoneMedia;
 import cn.qssq666.musicplayerdemo.interfaces.INotify;
 import cn.qssq666.musicplayerdemo.msic.MusicServiceHelper;
 import cn.qssq666.musicplayerdemo.msic.QssqTask;
+import cn.qssq666.musicplayerdemo.test.CallSensorManager;
 import cn.qssq666.musicplayerdemo.utils.DialogUtils;
 import cn.qssq666.musicplayerdemo.utils.TestUtils;
 
@@ -39,11 +40,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView tvGithub;
     private EditText evTitle;
     private EditText evUrl;
+    private CallSensorManager callSensorManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        callSensorManager = new CallSensorManager();
+        callSensorManager.onCreate(this);
+
         findViewById(R.id.btn_to_play_Page).setOnClickListener(this);
         findViewById(R.id.btn_scan_local_music).setOnClickListener(this);
         evTitle = ((EditText) findViewById(R.id.ev_title));
@@ -226,6 +231,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         super.onDestroy();
         instance.destory();
+        callSensorManager.onDestory();
         this.stopService(musicService);
     }
 }

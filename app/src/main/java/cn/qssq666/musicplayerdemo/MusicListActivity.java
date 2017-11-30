@@ -30,8 +30,8 @@ public class MusicListActivity extends AppCompatActivity {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_list);
-        recyclerView = ((RecyclerView) findViewById(R.id.recyclerview));
 
+        recyclerView = ((RecyclerView) findViewById(R.id.recyclerview));
 
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext(), LinearLayoutManager.VERTICAL, false));
         adapter = new MyTestAadapter();
