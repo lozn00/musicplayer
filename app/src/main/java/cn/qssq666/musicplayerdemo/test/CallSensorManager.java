@@ -103,13 +103,20 @@ if(!screen){//如果灭屏
                 }
 //                if (playerManager.isPlaying()){
                 if (value == sensor.getMaximumRange()) {
-                    CallUtils.changeToSpeakerMode(audioManager);
+                    if (!audioManager.isWiredHeadsetOn()) {
+
+                        CallUtils.changeToSpeakerMode(audioManager);
+                    }
                     setScreenOn();
                 } else {
 //                    CallUtils.changeToHeadset(audioManager);
-//                    CallUtils.changeToReceiver(audioManager);
-                    audioManager.setMode(AudioManager.MODE_IN_CALL);
-                    audioManager.setSpeakerphoneOn(true);
+                    if (!audioManager.isWiredHeadsetOn()) {
+                        CallUtils.changeToReceiver(audioManager);
+
+                    }
+//                    audioManager.setMode(AudioManager.MODE_IN_CALL);
+//                    audioManager.setSpeakerphoneOn(false);
+//                    audioManager.setMode(AudioManager.STREAM_VOICE_CALL);
 //                    CallUtils.changeToEarpieceMode(audioManager);
                     setScreenOff();
                 }

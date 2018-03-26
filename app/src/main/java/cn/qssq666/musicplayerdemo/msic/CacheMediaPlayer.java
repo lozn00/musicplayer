@@ -7,13 +7,14 @@ import com.danikula.videocache.CacheListener;
 import java.io.File;
 import java.io.IOException;
 
+import cn.qssq666.musicplayer.music.SystemMediaPlayerProxyImpl;
 import cn.qssq666.musicplayerdemo.AppContext;
 
 /**
  * Created by qssq on 2017/7/18 qssq666@foxmail.com
  */
 
-public class CacheMediaPlayer extends MediaPlayer implements CacheListener {
+public class CacheMediaPlayer extends SystemMediaPlayerProxyImpl implements CacheListener {
 
     public CacheMediaPlayer() {
         super();

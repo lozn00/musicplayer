@@ -67,6 +67,9 @@ public class CallUtils {
     }
 
     public static void resetPlayMode(AudioManager audioManager) {
+        /**
+         * 判断耳机是否已经插入
+         */
         if (audioManager.isWiredHeadsetOn()) {
             changeToHeadsetMode(audioManager);
         } else {
@@ -114,11 +117,12 @@ public class CallUtils {
     }
 
     /**
-     * 切换到听筒
+     * 切换到听筒 经验证在华为的某些机型中,设置MODE_IN_CALL根本不起作用.
      */
     public static void changeToReceiver(AudioManager audioManager) {
 //        audioManager.setSpeakerphoneOn(false);
-        audioManager.setMode(AudioManager.MODE_CURRENT);
+//        audioManager.setMode(AudioManager.MODE_CURRENT);
+            audioManager.setSpeakerphoneOn(false);
         if (Build.VERSION.SDK_INT >= 11) {
             audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
         } else {

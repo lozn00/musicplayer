@@ -37,11 +37,13 @@ public class PlayService extends Service {
 
     private PlayService.MediaControlBinder mediaControlBinder;
 
-    public MediaPlayer getMediaPlayer() {
+    public IMediaPlayerProxy getMediaPlayer() {
         return mMediaPlayer;
     }
 
-    private MediaPlayer mMediaPlayer;
+
+
+    private IMediaPlayerProxy mMediaPlayer;
     private int mPlayPosition = -1;
     private int mErrorCount = 0;
     private MediaInfoPublisher mMediaInfoPublicher;
@@ -244,6 +246,9 @@ public class PlayService extends Service {
     public class MediaControlBinder extends Binder {
 
 
+        private Object tag;
+        private int page;
+
         /**
          * @param playSpeed
          * @return
@@ -259,7 +264,7 @@ public class PlayService extends Service {
         }
 
 
-        public MediaPlayer getMediaPlayer() {
+        public IMediaPlayerProxy getMediaPlayer() {
             return mMediaPlayer;
         }
 
@@ -272,9 +277,9 @@ public class PlayService extends Service {
             return mMediaInfoPublicher.removeMediaInfoCallBack(mediaInfoCallBack);
         }
 
-        public void setMusicList(List<? extends MusicData> musicFileList) {
+        public boolean setMusicList(List<? extends MusicData> musicFileList) {
             if (musicFileList == null) {
-                musicFileList = new ArrayList<>();
+                return false;
             }
             if (isPlaying()) {
 //                pause();
@@ -283,8 +288,15 @@ public class PlayService extends Service {
             }
             mPlayPosition = -1;
 
-            PlayService.this.mMusicList = musicFileList;
+            if (PlayService.this.mMusicList != null) {
+                mMusicList.clear();
+            }
+            List temp = musicFileList;
+            PlayService.this.mMusicList.addAll(temp);
+
+            return false;
         }
+
 
         public List<? extends MusicData> getMusicList() {
             return mMusicList;
@@ -294,7 +306,7 @@ public class PlayService extends Service {
             if (mediaIsVolid()) {
                 return 0;
             }
-            return mMediaPlayer.getCurrentPosition();
+            return (int) mMediaPlayer.getCurrentPositionProxy();
         }
 
         public boolean isCurrentControlList(MusicData musicData) {
@@ -383,11 +395,11 @@ public class PlayService extends Service {
          *
          * @return
          */
-        public int getDuration() {
+        public long getDuration() {
             if (mediaIsVolid()) {
                 return -1;
             }
-            return mMediaPlayer.getDuration();
+            return mMediaPlayer.getDurationProxy();
         }
 
         public boolean pause() {
@@ -556,6 +568,34 @@ public class PlayService extends Service {
             return PlayService.this.playPositionIsVolid(position);
         }
 
+        public void setTag(Object tag) {
+            this.tag = tag;
+        }
+
+        public Object getTag() {
+            return tag;
+        }
+
+        public boolean apppendMusicList(List<? extends MusicData> musicFileList) {
+
+            if (PlayService.this.mMusicList == null) {
+                return false;
+            } else {
+                List temp = musicFileList;
+                PlayService.this.mMusicList.addAll(temp);
+                return true;
+            }
+        }
+
+        public void setPage(int page) {
+            this.page = page;
+        }
+
+        public int getPage() {
+            return page;
+        }
+
+
       /*  public boolean playPositionIsVolid() {
         }*/
     }
@@ -611,7 +651,7 @@ public class PlayService extends Service {
         @Override
         public void run() {
             if (mMediaPlayer != null) {
-                mMediaInfoPublicher.publishProgressChangeEvent(mMediaPlayer.getCurrentPosition());
+                mMediaInfoPublicher.publishProgressChangeEvent(mMediaPlayer.getCurrentPositionProxy());
 //                mProgressHandler.removeCallbacks(this);
                 mProgressHandler.postDelayed(this, 1000);
             }
@@ -632,9 +672,9 @@ public class PlayService extends Service {
     }
 
     private class PlayingMnager implements
-            MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener,
-            MediaPlayer.OnPreparedListener, MediaPlayer.OnSeekCompleteListener,
-            MediaPlayer.OnBufferingUpdateListener {
+            IMediaPlayerProxy.OnCompletionListener, IMediaPlayerProxy.OnErrorListener,
+            IMediaPlayerProxy.OnPreparedListener,IMediaPlayerProxy. OnSeekCompleteListener,
+            IMediaPlayerProxy. OnBufferingUpdateListener {
         public PlayingMnager() {
             initMedia();
         }
@@ -696,10 +736,10 @@ public class PlayService extends Service {
 
         protected void onSetDataResource() throws IOException {
             if (mUrl.startsWith("android.resource://")) {
-                mMediaPlayer.setDataSource(PlayService.this, Uri.parse(mUrl));
+                mMediaPlayer.setDataSourceProxy(PlayService.this, Uri.parse(mUrl));
 
             } else {
-                mMediaPlayer.setDataSource(mUrl);
+                mMediaPlayer.setDataSourceProxy(mUrl);
 
             }
         }
@@ -710,7 +750,7 @@ public class PlayService extends Service {
          * @param mp
          */
         @Override
-        public void onCompletion(MediaPlayer mp) {
+        public void onCompletion(IMediaPlayerProxy mp) {
           /*  if (mPlayState == PLAYSTATE.READY) {
                 Log.d(TAG, "应该是在还未就绪的情况下 调用了start导致 发生-38 错误,比较操蛋的是错误为毛也要调用onCompletion");
                 return;
@@ -761,7 +801,7 @@ public class PlayService extends Service {
          */
 
         @Override
-        public boolean onError(MediaPlayer mp, int what, int extra) {
+        public boolean onError(IMediaPlayerProxy mp, int what, int extra) {
             clearProgressListener();
             String wahtStr = "";
             String extraStr = "";
@@ -809,7 +849,7 @@ public class PlayService extends Service {
         }
 
         @Override
-        public void onPrepared(MediaPlayer mp) {
+        public void onPrepared(IMediaPlayerProxy mp) {
             if (mPlaySpeed != 1.0f) {
                 try {
                     setPlaySpeed(mPlaySpeed);
@@ -826,7 +866,7 @@ public class PlayService extends Service {
             mErrorCount = 0;//清空原来的错误
             mMediaInfoPublicher.publishProgressChangeEvent(0);
             mMediaPlayer.start();
-            if (mRequestPlayPosition != INVALID_STATE && mRequestPlayPosition <= mMediaPlayer.getDuration()) {
+            if (mRequestPlayPosition != INVALID_STATE && mRequestPlayPosition <= mMediaPlayer.getDurationProxy()) {
                 mMediaPlayer.seekTo(mRequestPlayPosition);
                 mRequestPlayPosition = INVALID_STATE;
             }
@@ -839,18 +879,18 @@ public class PlayService extends Service {
 
 
         @Override
-        public void onSeekComplete(MediaPlayer mp) {
+        public void onSeekComplete(IMediaPlayerProxy mp) {
             Log.d(TAG, "onSeekComplete");
         }
 
         @Override
-        public void onBufferingUpdate(MediaPlayer mp, int percent) {
+        public void onBufferingUpdate(IMediaPlayerProxy mp, int percent) {
             mMediaInfoPublicher.publishCacheChangeEvent(percent);
         }
     }
 
-    protected MediaPlayer onCreateMediaPlayer() {
-        return new MediaPlayer();
+    protected IMediaPlayerProxy onCreateMediaPlayer() {
+        return new SystemMediaPlayerProxyImpl();
     }
 
     private void destoryMediaPlayer() {
@@ -978,8 +1018,10 @@ public class PlayService extends Service {
             if (getMediaPlayer() == null) {
                 return false;
             }
-            getMediaPlayer().setPlaybackParams(getMediaPlayer().getPlaybackParams().setSpeed(playSpeed));
+//            getMediaPlayer().setPlaybackParams(getMediaPlayer().getPlaybackParams().setSpeed(playSpeed));
+            getMediaPlayer().setSpeed(playSpeed);
             this.mPlaySpeed = playSpeed;
+
             return true;
 
 
