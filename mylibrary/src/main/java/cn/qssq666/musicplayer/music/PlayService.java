@@ -42,7 +42,6 @@ public class PlayService extends Service {
     }
 
 
-
     private IMediaPlayerProxy mMediaPlayer;
     private int mPlayPosition = -1;
     private int mErrorCount = 0;
@@ -98,7 +97,6 @@ public class PlayService extends Service {
 //        EventBus.getDefault().register(this);
         mMediaControlMnager = new PlayingMnager();
         mMediaInfoPublicher = new MediaInfoPublisher();
-        requestAudioFocus();
     /*    IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
         registerReceiver(mLockScreenReceiver, intentFilter);*/
@@ -150,18 +148,18 @@ public class PlayService extends Service {
             new AudioManager.OnAudioFocusChangeListener() {
 
                 public void onAudioFocusChange(int focusChange) {
-                    switch (focusChange) {
-                        case (AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK):
+                    switch (focusChange) {//https://blog.csdn.net/thl789/article/details/7422931
+                        case (AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK)://暂时失去AudioFocus，但是可以继续播放，不过要在降低音量。
                             doTempPauseLogic();
                             break;
-                        case (AudioManager.AUDIOFOCUS_LOSS_TRANSIENT):
+                        case (AudioManager.AUDIOFOCUS_LOSS_TRANSIENT)://暂时失去Audio Focus，并会很快再次获得。必须停止Audio的播放，但是因为可能会很快再次获得AudioFocus，这里可以不释放Media资源；
                             doTempPauseLogic();
                             break;
-                        case (AudioManager.AUDIOFOCUS_LOSS):
+                        case (AudioManager.AUDIOFOCUS_LOSS)://并将会持续很长的时间。这里因为可能会停掉很长时间，所以不仅仅要停止Audio的播放，最好直接释放掉Media资源。而因为停止播放Audio的时间会很长，如果程序因为这个原因而失去AudioFocus，最好不要让它再次自动获得AudioFocus而继续播放，不然突然冒出来的声音会让用户感觉莫名其妙，感受很不好。这里直接放弃AudioFocu
                             doTempPauseLogic();
                             break;
 
-                        case (AudioManager.AUDIOFOCUS_GAIN):
+                        case (AudioManager.AUDIOFOCUS_GAIN)://指示申请得到的Audio Focus不知道会持续多久，一般是长期占有；
                             doTempContinueLogic();
                             break;
 
@@ -175,22 +173,28 @@ public class PlayService extends Service {
     private void doTempContinueLogic() {
         if (enterTempPauseMode && mMediaPlayer != null && mMediaPlayer.isPlaying() == false) {//如果是暂停的 而且是临时暂停模式
 
-            mMediaPlayer.start();
-            setPlayState(PLAYSTATE.MPS_PLAYING);
             //enterTempPauseMode 进入了这个模式怎么退出呢？只能用户操作的时候退出了，
         }
+            doStartInner();
+            setPlayState(PLAYSTATE.MPS_PLAYING);
+    }
+
+    private void doStartInner() {
+        requestAudioFocus();
+        mMediaPlayer.start();
+
     }
 
     private void doTempPauseLogic() {
         if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
             enterTempPauseMode = true;
-            mMediaPlayer.pause();
             setPlayState(PLAYSTATE.MPS_PAUSE);
         } else {//如果你手动暂停了 且已经 进入了临时模式 我不管， 如果你在播放 ，那么照样走上面的逻辑。只要你暂停了 ，我就会取消临时模式 这样就保证不会再别的app暂停的情况下又收到的开始的。然后本来暂停的音乐又开始播放了。
             if (enterTempPauseMode) {
                 enterTempPauseMode = false;
             }
         }
+            pauseInner();
     }
 
 
@@ -408,8 +412,7 @@ public class PlayService extends Service {
             if (mediaIsVolid()) {
                 return false;
             }
-            mMediaPlayer.pause();
-
+            pauseInner();
             return true;
         }
 
@@ -516,7 +519,7 @@ public class PlayService extends Service {
             if (mediaIsVolid()) {
                 return false;
             }
-            mMediaPlayer.start();
+            doStartInner();
             setPlayState(PLAYSTATE.MPS_PLAYING);
             clearProgressListener();
             mProgressHandler.postDelayed(mProgressRunnable, 1000);//然后播放现在的 每过1秒发送一次进度
@@ -595,9 +598,52 @@ public class PlayService extends Service {
             return page;
         }
 
+        public boolean playFirst() {
+            if (mMusicList == null || mMusicList.isEmpty()) {
+                return false;
+            } else {
+                MusicData musicData = mMusicList.get(0);
+                play(musicData);
+                return true;
+
+            }
+
+        }
+
+        public boolean playLast() {
+            if (mMusicList == null || mMusicList.isEmpty()) {
+                return false;
+            } else {
+                MusicData musicData = mMusicList.get(mMusicList.size() - 1);
+                play(musicData);
+                return true;
+
+            }
+
+        }
+
+        /**
+         * 是否可以直接切换暂停或者播放，不可以的话就需要重新播放
+         *
+         * @return
+         */
+        public boolean isReady() {
+            return mMediaPlayer != null && mMediaPlayer.getDurationProxy() > 0;
+        }
+
+        public void destory() {
+            PlayService.this.destoryMediaPlayer();
+            ;
+        }
+
 
       /*  public boolean playPositionIsVolid() {
         }*/
+    }
+
+    private void pauseInner() {
+        mMediaPlayer.pause();
+        abandonAudioFocus();
     }
 
     private MusicData getCurrentModel() {
@@ -673,8 +719,8 @@ public class PlayService extends Service {
 
     private class PlayingMnager implements
             IMediaPlayerProxy.OnCompletionListener, IMediaPlayerProxy.OnErrorListener,
-            IMediaPlayerProxy.OnPreparedListener,IMediaPlayerProxy. OnSeekCompleteListener,
-            IMediaPlayerProxy. OnBufferingUpdateListener {
+            IMediaPlayerProxy.OnPreparedListener, IMediaPlayerProxy.OnSeekCompleteListener,
+            IMediaPlayerProxy.OnBufferingUpdateListener {
         public PlayingMnager() {
             initMedia();
         }
@@ -697,11 +743,15 @@ public class PlayService extends Service {
             try {
 
 
+
+
                 // 开始播放
 //                    Log.w(TAG, "播放URL:" + mUrl);
                 if (mUrl == null) {
                     return;
                 }
+
+                requestAudioFocus();
 //                mMediaPlayer.release()
                 destoryMediaPlayer();
                 mMediaPlayer = onCreateMediaPlayer();
@@ -865,7 +915,7 @@ public class PlayService extends Service {
 
             mErrorCount = 0;//清空原来的错误
             mMediaInfoPublicher.publishProgressChangeEvent(0);
-            mMediaPlayer.start();
+            doStartInner();
             if (mRequestPlayPosition != INVALID_STATE && mRequestPlayPosition <= mMediaPlayer.getDurationProxy()) {
                 mMediaPlayer.seekTo(mRequestPlayPosition);
                 mRequestPlayPosition = INVALID_STATE;
@@ -1067,7 +1117,7 @@ public class PlayService extends Service {
             mMediaPlayer.release();
             mMediaPlayer = null;
         }
-        abandonAudioFocus();
+//        abandonAudioFocus();
 //        this.unregisterReceiver(mLockScreenReceiver);
     }
 

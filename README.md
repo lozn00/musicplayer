@@ -18,6 +18,9 @@ demo项目则演示了多个列表 多个界面的控制播放暂停 能力 ui�
 我的公司项目app正常使用中,复杂程度和类似正常的音乐app,目前功能比百度音乐人还复杂,多了各种语音 视频 动态 列表，各种fragment 嵌套多个，多个fragment中的列表播放控制和解绑。点击这边的fragment又要控制另外的 fragment列表的状态变成暂停，
 所以说，这app绝对不是因为demo而出现，而是先有项目后有demo
 
+#### 扩展性
+兼容第三方MediaPlayer ，系统的播放器MediaPlayer已经适配好了```SystemMediaPlayerProxyImpl``
+七牛PLMediaPlayer的代码我会在本文档最后么给出.各位根据模仿着改就ok的哈!
 ##### 使用方法
 
 gradle
@@ -244,3 +247,172 @@ MusicServiceHelper是对绑定服务和添加监听的封装，各位不懂服�
 # 其他吐槽
 
 demo已实现了离线缓存功能,轻松为服务器减压! 推荐做烧钱的大流量公司这么干，可以大大节省成本.
+
+# PLMediaPlayer实现方案
+```java
+
+
+public class PLMediaPlayerImpl extends PLMediaPlayer implements IMediaPlayerProxy {
+
+    private static final String TAG = "PLMediaPlayerImpl";
+
+    public PLMediaPlayerImpl(Context context) {
+        super(context);
+    }
+
+    public PLMediaPlayerImpl(Context context, AVOptions avOptions) {
+        super(context, avOptions);
+    }
+
+
+    public PLMediaPlayerImpl getInstance() {
+        return this;
+    }
+
+
+
+
+    @Override
+    public void setOnBufferingUpdateListener(final IMediaPlayerProxy.OnBufferingUpdateListener listener) {
+        super.setOnBufferingUpdateListener(new PLMediaPlayer.OnBufferingUpdateListener() {
+            @Override
+            public void onBufferingUpdate(PLMediaPlayer plMediaPlayer, int percent) {
+                if (listener != null) {
+                    listener.onBufferingUpdate(getInstance(), percent);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void setOnErrorListener(final IMediaPlayerProxy.OnErrorListener listener) {
+        super.setOnErrorListener(new PLMediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(PLMediaPlayer plMediaPlayer, int i) {
+                if (listener == null) {
+                    return false;
+                } else {
+                    return listener.onError(getInstance(), i, 0);
+
+                }
+            }
+        });
+    }
+
+    @Override
+    public void setOnPreparedListener(final IMediaPlayerProxy.OnPreparedListener listener) {
+        super.setOnPreparedListener(new PLMediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(PLMediaPlayer plMediaPlayer, int i) {
+                if (listener != null) {
+                    listener.onPrepared(getInstance());
+                }
+            }
+        });
+    }
+
+    @Override
+    public void setOnCompletionListener(final IMediaPlayerProxy.OnCompletionListener listener) {
+
+        super.setOnCompletionListener(new PLMediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(PLMediaPlayer mp) {
+
+                if (listener != null) {
+                    listener.onCompletion(getInstance());
+                }
+            }
+        });
+    }
+
+    @Override
+    public void setOnSeekCompleteListener(final IMediaPlayerProxy.OnSeekCompleteListener listener) {
+        super.setOnSeekCompleteListener(new PLMediaPlayer.OnSeekCompleteListener() {
+            @Override
+            public void onSeekComplete(PLMediaPlayer plMediaPlayer) {
+                if (listener != null) {
+                    listener.onSeekComplete(getInstance());
+                }
+            }
+        });
+    }
+
+
+    @Override
+    public void setAudioStreamType(int streamMusic) {
+
+    }
+
+    @Override
+    public void seekTo(int seekto) {
+
+        Prt.w(TAG,"seekTo:"+seekto);
+        super.seekTo(seekto);
+    }
+
+
+    @Override
+    public void setDataSourceProxy(Context context, Uri parse) throws IOException {
+        super.setDataSource(context, parse);
+    }
+
+    @Override
+    public void setDataSourceProxy(String url) throws IOException {
+        super.setDataSource(url);
+
+    }
+
+    @Override
+    public long getCurrentPositionProxy() {
+        return super.getCurrentPosition();
+    }
+
+    @Override
+    public long getDurationProxy() {
+        return super.getDuration();
+    }
+
+    @Override
+    public void setSpeed(float playSpeed) {
+
+    }
+
+    @Override
+    public float getSpeed() {
+        return 0;
+    }
+}
+
+
+```
+七牛服务
+```java
+
+
+
+public class LiveMusicService extends PlayService {
+
+    @Override
+    protected IMediaPlayerProxy onCreateMediaPlayer() {
+        AVOptions options = new AVOptions();
+        int isLiveStreaming = 0;
+        // the unit of timeout is ms
+        options.setInteger(AVOptions.KEY_PREPARE_TIMEOUT, 10 * 1000);
+        options.setInteger(AVOptions.KEY_GET_AV_FRAME_TIMEOUT, 10 * 1000);
+        // Some optimization with buffering mechanism when be set to 1
+        options.setInteger(AVOptions.KEY_LIVE_STREAMING, isLiveStreaming);
+        if (isLiveStreaming == 1) {
+            options.setInteger(AVOptions.KEY_DELAY_OPTIMIZATION, 1);
+        }
+        // 1 -> hw codec enable, 0 -> disable [recommended]
+//        int codec = getIntent().getIntExtra("mediaCodec", 0);
+        options.setInteger(AVOptions.KEY_MEDIACODEC, 1);
+        // whether start play automatically after prepared, default value is 1
+        options.setInteger(AVOptions.KEY_START_ON_PREPARED, 0);
+
+        return new PLMediaPlayerImpl(getApplicationContext(), options);
+    }
+}
+
+```
+如果是直播就把isLiveStreaming改成1
